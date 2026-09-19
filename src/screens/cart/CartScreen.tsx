@@ -1,7 +1,6 @@
 import { FlatList, Image, Pressable, StyleSheet, View } from "react-native";
 import React from "react";
 import AppSafeView from "../../components/views/AppSafeView";
-import HomeHeader from "../../components/headers/HomeHeader";
 import AppText from "../../components/texts/AppText";
 import { useCart } from "../../store/CartContext";
 import { AppColors } from "../../styles/color";
@@ -23,12 +22,12 @@ const CartScreen = () => {
   const { navigateToTab } = useMainTabNavigation();
   const { colors } = useTheme();
   const { t } = useLanguage();
+  const cartTotal = cart.reduce((total, product) => total + product.price, 0);
 
   return (
     <AppSafeView
       style={[styles.screen, { backgroundColor: colors.background }]}
     >
-      <HomeHeader />
       <FlatList
         data={cart}
         keyExtractor={(product) => product.id.toString()}
@@ -129,66 +128,105 @@ const CartScreen = () => {
           </View>
         )}
         ListFooterComponent={
-          favorites.length > 0 ? (
-            <View style={styles.favoritesSection}>
-              <AppText variant="bold" style={styles.favoritesTitle}>
-                {t("savedFavorites")}
-              </AppText>
-              {favorites.map((product) => (
-                <View
-                  key={product.id}
-                  style={[
-                    styles.favoriteItem,
-                    { backgroundColor: colors.surface },
-                  ]}
-                >
-                  <Image
-                    source={{ uri: product.imageURL }}
+          <>
+            {favorites.length > 0 ? (
+              <View style={styles.favoritesSection}>
+                <AppText variant="bold" style={styles.favoritesTitle}>
+                  {t("savedFavorites")}
+                </AppText>
+                {favorites.map((product) => (
+                  <View
+                    key={product.id}
                     style={[
-                      styles.favoriteImage,
-                      { backgroundColor: colors.elevatedSurface },
+                      styles.favoriteItem,
+                      { backgroundColor: colors.surface },
                     ]}
-                  />
-                  <AppText numberOfLines={1} style={styles.favoriteText}>
-                    {product.title}
-                  </AppText>
-                  <View style={styles.favoriteActions}>
-                    <Pressable
-                      accessibilityLabel={`Add ${product.title} to cart`}
-                      accessibilityRole="button"
-                      disabled={isInCart(product.id)}
-                      hitSlop={6}
-                      onPress={() => addToCart(product)}
-                      style={styles.favoriteActionButton}
-                    >
-                      <MaterialIcons
-                        name="add-shopping-cart"
-                        size={s(21)}
-                        color={
-                          isInCart(product.id)
-                            ? colors.disabledGray
-                            : colors.primary
-                        }
-                      />
-                    </Pressable>
-                    <Pressable
-                      accessibilityLabel={`Remove ${product.title} from favorites`}
-                      accessibilityRole="button"
-                      hitSlop={6}
-                      onPress={() => toggleFavorite(product)}
-                      style={styles.favoriteActionButton}
-                    >
-                      <MaterialIcons
-                        name="clear"
-                        size={s(22)}
-                        color={colors.medGray}
-                      />
-                    </Pressable>
+                  >
+                    <Image
+                      source={{ uri: product.imageURL }}
+                      style={[
+                        styles.favoriteImage,
+                        { backgroundColor: colors.elevatedSurface },
+                      ]}
+                    />
+                    <AppText numberOfLines={1} style={styles.favoriteText}>
+                      {product.title}
+                    </AppText>
+                    <View style={styles.favoriteActions}>
+                      <Pressable
+                        accessibilityLabel={`Add ${product.title} to cart`}
+                        accessibilityRole="button"
+                        disabled={isInCart(product.id)}
+                        hitSlop={6}
+                        onPress={() => addToCart(product)}
+                        style={styles.favoriteActionButton}
+                      >
+                        <MaterialIcons
+                          name="add-shopping-cart"
+                          size={s(21)}
+                          color={
+                            isInCart(product.id)
+                              ? colors.disabledGray
+                              : colors.primary
+                          }
+                        />
+                      </Pressable>
+                      <Pressable
+                        accessibilityLabel={`Remove ${product.title} from favorites`}
+                        accessibilityRole="button"
+                        hitSlop={6}
+                        onPress={() => toggleFavorite(product)}
+                        style={styles.favoriteActionButton}
+                      >
+                        <MaterialIcons
+                          name="clear"
+                          size={s(22)}
+                          color={colors.medGray}
+                        />
+                      </Pressable>
+                    </View>
                   </View>
+                ))}
+              </View>
+            ) : null}
+            {cart.length > 0 ? (
+              <View
+                style={[
+                  styles.summaryCard,
+                  {
+                    backgroundColor: colors.surface,
+                    borderColor: colors.border,
+                  },
+                ]}
+              >
+                <View style={styles.summaryRow}>
+                  <AppText style={{ color: colors.secondaryText }}>
+                    {t("subtotal")}
+                  </AppText>
+                  <AppText style={{ color: colors.text }}>
+                    ${cartTotal.toLocaleString()}
+                  </AppText>
                 </View>
-              ))}
-            </View>
-          ) : null
+                <View
+                  style={[
+                    styles.summaryDivider,
+                    { backgroundColor: colors.border },
+                  ]}
+                />
+                <View style={styles.summaryRow}>
+                  <AppText variant="bold" style={{ color: colors.text }}>
+                    {t("total")}
+                  </AppText>
+                  <AppText
+                    variant="bold"
+                    style={[styles.summaryTotal, { color: colors.primary }]}
+                  >
+                    ${cartTotal.toLocaleString()}
+                  </AppText>
+                </View>
+              </View>
+            ) : null}
+          </>
         }
         showsVerticalScrollIndicator={false}
       />
@@ -204,6 +242,7 @@ const styles = StyleSheet.create({
   },
   content: {
     padding: s(16),
+    paddingTop: s(22),
     paddingBottom: vs(24),
     flexGrow: 1,
   },
@@ -314,6 +353,24 @@ const styles = StyleSheet.create({
   },
   favoritesSection: {
     marginTop: vs(18),
+  },
+  summaryCard: {
+    marginTop: vs(18),
+    padding: s(16),
+    borderRadius: s(18),
+    borderWidth: 1,
+  },
+  summaryRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  summaryDivider: {
+    height: 1,
+    marginVertical: vs(12),
+  },
+  summaryTotal: {
+    fontSize: s(18),
   },
   favoritesTitle: {
     marginBottom: vs(10),

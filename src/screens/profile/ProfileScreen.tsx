@@ -9,7 +9,6 @@ import {
 } from "react-native";
 import React from "react";
 import AppSafeView from "../../components/views/AppSafeView";
-import HomeHeader from "../../components/headers/HomeHeader";
 import AppText from "../../components/texts/AppText";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { IMAGES } from "../../constants/images-paths";
@@ -17,18 +16,31 @@ import { AppColors } from "../../styles/color";
 import { s, vs } from "react-native-size-matters";
 import { useTheme } from "../../store/ThemeContext";
 import { languageOptions, useLanguage } from "../../store/LanguageContext";
+import AccountDetailsScreen from "./AccountDetailsScreen";
+import { useNavigation } from "@react-navigation/native";
+import type { StackNavigationProp } from "@react-navigation/stack";
+import type { AuthStackParamList } from "../../navigation/AuthStack";
+
+type MainAppNavigationProp = StackNavigationProp<AuthStackParamList, "MainApp">;
 
 const ProfileScreen = () => {
   const [isLanguageModalVisible, setLanguageModalVisible] =
     React.useState(false);
+  const [isAccountDetailsVisible, setAccountDetailsVisible] =
+    React.useState(false);
   const { colors, isDarkMode, setIsDarkMode } = useTheme();
   const { language, setLanguage, t } = useLanguage();
+  const navigation = useNavigation<MainAppNavigationProp>();
+
+  const handleAccountDeleted = () => {
+    setAccountDetailsVisible(false);
+    navigation.replace("SignUpScreen");
+  };
 
   return (
     <AppSafeView
       style={[styles.screen, { backgroundColor: colors.background }]}
     >
-      <HomeHeader />
       <ScrollView
         contentContainerStyle={styles.content}
         showsVerticalScrollIndicator={false}
@@ -54,7 +66,10 @@ const ProfileScreen = () => {
           </Pressable>
         </View>
 
-        <View
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel={t("accountDetails")}
+          onPress={() => setAccountDetailsVisible(true)}
           style={[
             styles.profileCard,
             { backgroundColor: colors.surface, borderColor: colors.border },
@@ -91,7 +106,7 @@ const ProfileScreen = () => {
             size={s(23)}
             color={colors.secondaryText}
           />
-        </View>
+        </Pressable>
 
         <AppText style={[styles.sectionLabel, { color: colors.secondaryText }]}>
           {t("preferences")}
@@ -288,6 +303,18 @@ const ProfileScreen = () => {
           </Pressable>
         </Pressable>
       </Modal>
+
+      <Modal
+        animationType="slide"
+        presentationStyle="fullScreen"
+        visible={isAccountDetailsVisible}
+        onRequestClose={() => setAccountDetailsVisible(false)}
+      >
+        <AccountDetailsScreen
+          onClose={() => setAccountDetailsVisible(false)}
+          onAccountDeleted={handleAccountDeleted}
+        />
+      </Modal>
     </AppSafeView>
   );
 };
@@ -300,6 +327,7 @@ const styles = StyleSheet.create({
   },
   content: {
     padding: s(16),
+    paddingTop: vs(22),
     paddingBottom: vs(34),
   },
   pageHeading: {

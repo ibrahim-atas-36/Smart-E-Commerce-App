@@ -47,8 +47,17 @@ type TranslationKey =
   | "alreadyAccount"
   | "savedFavorites"
   | "addToCart"
-  | "addedToCart";
-
+  | "addedToCart"
+  | "searchProducts"
+  | "noProductsFound"
+  | "subtotal"
+  | "total"
+  | "accountDetails"
+  | "personalInformation"
+  | "fullName"
+  | "memberSince"
+  | "deleteAccount"
+  | "deleteAccountWarning";
 type Translations = Record<TranslationKey, string>;
 
 const translations: Record<LanguageCode, Translations> = {
@@ -88,6 +97,16 @@ const translations: Record<LanguageCode, Translations> = {
     savedFavorites: "Saved favorites",
     addToCart: "Add to cart",
     addedToCart: "Added to cart",
+    searchProducts: "Search products",
+    noProductsFound: "No products found",
+    subtotal: "Subtotal",
+    total: "Total",
+    accountDetails: "Account details",
+    personalInformation: "Personal information",
+    fullName: "Full name",
+    memberSince: "Member since",
+    deleteAccount: "Delete account",
+    deleteAccountWarning: "This action cannot be undone.",
   },
   fr: {
     account: "COMPTE",
@@ -125,6 +144,16 @@ const translations: Record<LanguageCode, Translations> = {
     savedFavorites: "Favoris enregistrés",
     addToCart: "Ajouter au panier",
     addedToCart: "Ajouté au panier",
+    searchProducts: "Rechercher des produits",
+    noProductsFound: "Aucun produit trouvé",
+    subtotal: "Sous-total",
+    total: "Total",
+    accountDetails: "Détails du compte",
+    personalInformation: "Informations personnelles",
+    fullName: "Nom complet",
+    memberSince: "Membre depuis",
+    deleteAccount: "Supprimer le compte",
+    deleteAccountWarning: "Cette action est irréversible.",
   },
   es: {
     account: "CUENTA",
@@ -162,6 +191,16 @@ const translations: Record<LanguageCode, Translations> = {
     savedFavorites: "Favoritos guardados",
     addToCart: "Añadir al carrito",
     addedToCart: "Añadido al carrito",
+    searchProducts: "Buscar productos",
+    noProductsFound: "No se encontraron productos",
+    subtotal: "Subtotal",
+    total: "Total",
+    accountDetails: "Detalles de la cuenta",
+    personalInformation: "Información personal",
+    fullName: "Nombre completo",
+    memberSince: "Miembro desde",
+    deleteAccount: "Eliminar cuenta",
+    deleteAccountWarning: "Esta acción no se puede deshacer.",
   },
   it: {
     account: "ACCOUNT",
@@ -199,6 +238,16 @@ const translations: Record<LanguageCode, Translations> = {
     savedFavorites: "Preferiti salvati",
     addToCart: "Aggiungi al carrello",
     addedToCart: "Aggiunto al carrello",
+    searchProducts: "Cerca prodotti",
+    noProductsFound: "Nessun prodotto trovato",
+    subtotal: "Subtotale",
+    total: "Totale",
+    accountDetails: "Dettagli account",
+    personalInformation: "Informazioni personali",
+    fullName: "Nome completo",
+    memberSince: "Membro dal",
+    deleteAccount: "Elimina account",
+    deleteAccountWarning: "Questa azione non può essere annullata.",
   },
   pt: {
     account: "CONTA",
@@ -236,6 +285,16 @@ const translations: Record<LanguageCode, Translations> = {
     savedFavorites: "Favoritos salvos",
     addToCart: "Adicionar ao carrinho",
     addedToCart: "Adicionado ao carrinho",
+    searchProducts: "Pesquisar produtos",
+    noProductsFound: "Nenhum produto encontrado",
+    subtotal: "Subtotal",
+    total: "Total",
+    accountDetails: "Detalhes da conta",
+    personalInformation: "Informações pessoais",
+    fullName: "Nome completo",
+    memberSince: "Membro desde",
+    deleteAccount: "Excluir conta",
+    deleteAccountWarning: "Esta ação não pode ser desfeita.",
   },
   de: {
     account: "KONTO",
@@ -273,6 +332,16 @@ const translations: Record<LanguageCode, Translations> = {
     savedFavorites: "Gespeicherte Favoriten",
     addToCart: "In den Warenkorb",
     addedToCart: "Hinzugefügt",
+    searchProducts: "Produkte suchen",
+    noProductsFound: "Keine Produkte gefunden",
+    subtotal: "Zwischensumme",
+    total: "Gesamt",
+    accountDetails: "Kontodetails",
+    personalInformation: "Persönliche Daten",
+    fullName: "Vollständiger Name",
+    memberSince: "Mitglied seit",
+    deleteAccount: "Konto löschen",
+    deleteAccountWarning: "Diese Aktion kann nicht rückgängig gemacht werden.",
   },
   tr: {
     account: "HESAP",
@@ -310,6 +379,16 @@ const translations: Record<LanguageCode, Translations> = {
     savedFavorites: "Kayıtlı favoriler",
     addToCart: "Sepete ekle",
     addedToCart: "Sepete eklendi",
+    searchProducts: "Ürün ara",
+    noProductsFound: "Ürün bulunamadı",
+    subtotal: "Ara toplam",
+    total: "Toplam",
+    accountDetails: "Hesap detayları",
+    personalInformation: "Kişisel bilgiler",
+    fullName: "Ad soyad",
+    memberSince: "Üyelik tarihi",
+    deleteAccount: "Hesabı sil",
+    deleteAccountWarning: "Bu işlem geri alınamaz.",
   },
 };
 
