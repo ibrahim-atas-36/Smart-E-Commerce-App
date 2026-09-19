@@ -1,20 +1,22 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { StatusBar } from "react-native";
+import FlashMessage from "react-native-flash-message";
+import { SafeAreaProvider } from "react-native-safe-area-context";
+import AuthStack from "./src/navigation/AuthStack";
+import { NavigationContainer } from "@react-navigation/native";
+import { CartProvider } from "./src/store/CartContext";
 
 export default function App() {
   return (
-    <View style={styles.container}>
-      <Text>Open up App.tsx to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <SafeAreaProvider>
+      <CartProvider>
+        <NavigationContainer>
+          <FlashMessage
+            position="top"
+            statusBarHeight={StatusBar.currentHeight ?? 0}
+          />
+          <AuthStack />
+        </NavigationContainer>
+      </CartProvider>
+    </SafeAreaProvider>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
