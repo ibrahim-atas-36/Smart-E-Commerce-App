@@ -7,10 +7,17 @@ import AppText from "../../components/texts/AppText";
 import { products } from "../../data/products";
 import { AppColors } from "../../styles/color";
 import { s, vs } from "react-native-size-matters";
+import { useTheme } from "../../store/ThemeContext";
+import { useLanguage } from "../../store/LanguageContext";
 
 const HomeScreen = () => {
+  const { colors } = useTheme();
+  const { t } = useLanguage();
+
   return (
-    <AppSafeView style={styles.screen}>
+    <AppSafeView
+      style={[styles.screen, { backgroundColor: colors.background }]}
+    >
       <HomeHeader />
       <FlatList
         data={products}
@@ -22,15 +29,27 @@ const HomeScreen = () => {
         ListHeaderComponent={
           <View style={styles.heading}>
             <View>
-              <AppText variant="bold" style={styles.title}>
-                Discover products
+              <AppText
+                variant="bold"
+                style={[styles.title, { color: colors.text }]}
+              >
+                {t("discoverProducts")}
               </AppText>
-              <AppText style={styles.subtitle}>
-                Find something you will love
+              <AppText
+                style={[styles.subtitle, { color: colors.secondaryText }]}
+              >
+                {t("findSomething")}
               </AppText>
             </View>
-            <View style={styles.filterButton}>
-              <AppText style={styles.filterIcon}>≡</AppText>
+            <View
+              style={[
+                styles.filterButton,
+                { backgroundColor: colors.surface, borderColor: colors.border },
+              ]}
+            >
+              <AppText style={[styles.filterIcon, { color: colors.text }]}>
+                ≡
+              </AppText>
             </View>
           </View>
         }

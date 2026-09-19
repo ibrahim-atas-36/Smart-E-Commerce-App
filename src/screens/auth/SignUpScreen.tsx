@@ -10,6 +10,9 @@ import { AppColors } from "../../styles/color";
 import { useNavigation } from "@react-navigation/native";
 import type { StackNavigationProp } from "@react-navigation/stack";
 import type { AuthStackParamList } from "../../navigation/AuthStack";
+import { useTheme } from "../../store/ThemeContext";
+import AuthScreenActions from "../../components/headers/AuthScreenActions";
+import { useLanguage } from "../../store/LanguageContext";
 
 type SignUpNavigationProp = StackNavigationProp<
   AuthStackParamList,
@@ -22,16 +25,24 @@ const SignUpScreen = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const { colors, isDarkMode } = useTheme();
+  const { t } = useLanguage();
   // This hook lets the sign-up screen return to the sign-in screen.
   const navigation = useNavigation<SignUpNavigationProp>();
 
   return (
-    <AppSafeView style={styles.container}>
+    <AppSafeView
+      style={[styles.container, { backgroundColor: colors.background }]}
+    >
+      <AuthScreenActions />
       <View style={styles.form}>
-        <Image source={IMAGES.appLogo} style={styles.logo} />
+        <Image
+          source={IMAGES.appLogo}
+          style={[styles.logo, isDarkMode && { tintColor: colors.text }]}
+        />
 
         <AppTextInput
-          placeholder="Email"
+          placeholder={t("email")}
           onChangeText={setEmail}
           value={email}
           keyboardType="email-address"
@@ -40,7 +51,7 @@ const SignUpScreen = () => {
 
         <View style={styles.passwordWrapper}>
           <AppTextInput
-            placeholder="Password"
+            placeholder={t("password")}
             onChangeText={setPassword}
             value={password}
             secureTextEntry={!showPassword}
@@ -52,7 +63,7 @@ const SignUpScreen = () => {
             onPress={() => setShowPassword((prev) => !prev)}
             style={styles.eyeButton}
           >
-            <AppText style={styles.eyeText}>
+            <AppText style={[styles.eyeText, { color: colors.secondaryText }]}>
               {showPassword ? "Hide" : "Show"}
             </AppText>
           </Pressable>
@@ -60,7 +71,7 @@ const SignUpScreen = () => {
 
         <View style={styles.passwordWrapper}>
           <AppTextInput
-            placeholder="Confirm Password"
+            placeholder={t("confirmPassword")}
             onChangeText={setConfirmPassword}
             value={confirmPassword}
             secureTextEntry={!showConfirmPassword}
@@ -72,35 +83,42 @@ const SignUpScreen = () => {
             onPress={() => setShowConfirmPassword((prev) => !prev)}
             style={styles.eyeButton}
           >
-            <AppText style={styles.eyeText}>
+            <AppText style={[styles.eyeText, { color: colors.secondaryText }]}>
               {showConfirmPassword ? "Hide" : "Show"}
             </AppText>
           </Pressable>
         </View>
 
-        <AppText variant="bold" style={styles.appName}>
+        <AppText
+          variant="bold"
+          style={[styles.appName, { color: colors.text }]}
+        >
           Smart E Commerce
         </AppText>
 
         <AppButton
-          title="Create New Account"
+          title={t("createAccount")}
           style={styles.loginButton}
           // Continue to the main tab layout after account creation.
           onPress={() => navigation.navigate("MainApp")}
         />
         <AppButton
-          title="Sign In"
+          title={t("login")}
           style={styles.registerButton}
-          backgroundColor={AppColors.lightGray}
-          textColor={AppColors.black}
+          backgroundColor={colors.elevatedSurface}
+          textColor={colors.text}
           // Return to the existing login screen when the user already has an account.
           onPress={() => navigation.navigate("SignInScreen")}
         />
 
         <View style={styles.signUpRow}>
-          <AppText style={styles.signUpText}>Already have an account?</AppText>
+          <AppText style={[styles.signUpText, { color: colors.text }]}>
+            {t("alreadyAccount")}
+          </AppText>
           <Pressable onPress={() => navigation.navigate("SignInScreen")}>
-            <AppText style={styles.signUpLink}>Sign In</AppText>
+            <AppText style={[styles.signUpLink, { color: colors.text }]}>
+              {t("login")}
+            </AppText>
           </Pressable>
         </View>
       </View>

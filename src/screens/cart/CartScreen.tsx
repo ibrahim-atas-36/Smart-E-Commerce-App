@@ -8,6 +8,8 @@ import { AppColors } from "../../styles/color";
 import { s, vs } from "react-native-size-matters";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { useMainTabNavigation } from "../../navigation/MainTabNavigationContext";
+import { useTheme } from "../../store/ThemeContext";
+import { useLanguage } from "../../store/LanguageContext";
 
 const CartScreen = () => {
   const {
@@ -19,9 +21,13 @@ const CartScreen = () => {
     toggleFavorite,
   } = useCart();
   const { navigateToTab } = useMainTabNavigation();
+  const { colors } = useTheme();
+  const { t } = useLanguage();
 
   return (
-    <AppSafeView style={styles.screen}>
+    <AppSafeView
+      style={[styles.screen, { backgroundColor: colors.background }]}
+    >
       <HomeHeader />
       <FlatList
         data={cart}
@@ -30,47 +36,79 @@ const CartScreen = () => {
         ListHeaderComponent={
           <View style={styles.heading}>
             <AppText variant="bold" style={styles.title}>
-              Your cart
+              {t("yourCart")}
             </AppText>
-            <AppText style={styles.count}>{cart.length} items</AppText>
+            <AppText style={styles.count}>
+              {cart.length} {t("cartItems")}
+            </AppText>
           </View>
         }
         ListEmptyComponent={
-          <View style={styles.emptyState}>
-            <View style={styles.emptyIcon}>
+          <View
+            style={[
+              styles.emptyState,
+              { backgroundColor: colors.surface, borderColor: colors.border },
+            ]}
+          >
+            <View
+              style={[
+                styles.emptyIcon,
+                { backgroundColor: colors.elevatedSurface },
+              ]}
+            >
               <MaterialIcons
                 name="shopping-bag"
                 size={s(34)}
-                color={AppColors.primary}
+                color={colors.primary}
               />
             </View>
-            <AppText style={styles.emptyEyebrow}>READY WHEN YOU ARE</AppText>
-            <AppText variant="bold" style={styles.emptyTitle}>
-              Your cart is waiting
+            <AppText
+              style={[styles.emptyEyebrow, { color: colors.secondaryText }]}
+            >
+              {t("readyWhen")}
             </AppText>
-            <AppText style={styles.emptyText}>
-              Discover something you love and it will appear here.
+            <AppText variant="bold" style={styles.emptyTitle}>
+              {t("cartWaiting")}
+            </AppText>
+            <AppText
+              style={[styles.emptyText, { color: colors.secondaryText }]}
+            >
+              {t("discoverSomething")}
             </AppText>
             <Pressable
               accessibilityRole="button"
               accessibilityLabel="Explore products"
               onPress={() => navigateToTab("Home")}
-              style={styles.shopButton}
+              style={[styles.shopButton, { backgroundColor: colors.primary }]}
             >
-              <AppText variant="bold" style={styles.shopButtonText}>
-                Explore products
+              <AppText
+                variant="bold"
+                style={[styles.shopButtonText, { color: colors.background }]}
+              >
+                {t("exploreProducts")}
               </AppText>
               <MaterialIcons
                 name="arrow-forward"
                 size={s(19)}
-                color={AppColors.white}
+                color={colors.white}
               />
             </Pressable>
           </View>
         }
         renderItem={({ item }) => (
-          <View style={styles.item}>
-            <Image source={{ uri: item.imageURL }} style={styles.itemImage} />
+          <View
+            style={[
+              styles.item,
+              { backgroundColor: colors.surface, borderColor: colors.border },
+            ]}
+          >
+            <Image
+              source={{ uri: item.imageURL }}
+              style={[
+                styles.itemImage,
+                { backgroundColor: colors.elevatedSurface },
+              ]}
+            />
             <View style={styles.itemDetails}>
               <AppText numberOfLines={1} style={styles.itemTitle}>
                 {item.title}
@@ -86,11 +124,7 @@ const CartScreen = () => {
               onPress={() => removeFromCart(item.id)}
               style={styles.removeButton}
             >
-              <MaterialIcons
-                name="clear"
-                size={s(24)}
-                color={AppColors.medGray}
-              />
+              <MaterialIcons name="clear" size={s(24)} color={colors.medGray} />
             </Pressable>
           </View>
         )}
@@ -98,13 +132,22 @@ const CartScreen = () => {
           favorites.length > 0 ? (
             <View style={styles.favoritesSection}>
               <AppText variant="bold" style={styles.favoritesTitle}>
-                Saved favorites
+                {t("savedFavorites")}
               </AppText>
               {favorites.map((product) => (
-                <View key={product.id} style={styles.favoriteItem}>
+                <View
+                  key={product.id}
+                  style={[
+                    styles.favoriteItem,
+                    { backgroundColor: colors.surface },
+                  ]}
+                >
                   <Image
                     source={{ uri: product.imageURL }}
-                    style={styles.favoriteImage}
+                    style={[
+                      styles.favoriteImage,
+                      { backgroundColor: colors.elevatedSurface },
+                    ]}
                   />
                   <AppText numberOfLines={1} style={styles.favoriteText}>
                     {product.title}
@@ -123,8 +166,8 @@ const CartScreen = () => {
                         size={s(21)}
                         color={
                           isInCart(product.id)
-                            ? AppColors.disabledGray
-                            : AppColors.primary
+                            ? colors.disabledGray
+                            : colors.primary
                         }
                       />
                     </Pressable>
@@ -138,7 +181,7 @@ const CartScreen = () => {
                       <MaterialIcons
                         name="clear"
                         size={s(22)}
-                        color={AppColors.medGray}
+                        color={colors.medGray}
                       />
                     </Pressable>
                   </View>

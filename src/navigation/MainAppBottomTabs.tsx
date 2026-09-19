@@ -12,6 +12,7 @@ import {
   MainTabNavigationContext,
   type MainTabName,
 } from "./MainTabNavigationContext";
+import { useTheme } from "../store/ThemeContext";
 
 export type MainAppBottomTabParamList = {
   Home: undefined;
@@ -35,15 +36,29 @@ interface MainTabBarProps {
 
 const MainTabBar = ({ activeIndex, onSelect, blurTarget }: MainTabBarProps) => {
   const insets = useSafeAreaInsets();
+  const { colors, isDarkMode } = useTheme();
 
   return (
-    <View style={[styles.tabBarShell, { bottom: insets.bottom + 8 }]}>
+    <View
+      style={[
+        styles.tabBarShell,
+        {
+          bottom: insets.bottom + 8,
+          backgroundColor: isDarkMode
+            ? "rgba(27, 29, 34, 0.78)"
+            : "rgba(255, 255, 255, 0.46)",
+          borderColor: isDarkMode
+            ? "rgba(255, 255, 255, 0.18)"
+            : "rgba(255, 255, 255, 0.85)",
+        },
+      ]}
+    >
       <BlurView
         blurMethod="dimezisBlurView"
         blurTarget={blurTarget}
         intensity={55}
         style={StyleSheet.absoluteFill}
-        tint="systemMaterialLight"
+        tint={isDarkMode ? "systemMaterialDark" : "systemMaterialLight"}
       />
       <View style={styles.tabBar}>
         {tabNames.map((routeName, index) => {
@@ -55,14 +70,21 @@ const MainTabBar = ({ activeIndex, onSelect, blurTarget }: MainTabBarProps) => {
               accessibilityRole="tab"
               accessibilityState={isFocused ? { selected: true } : {}}
               onPress={() => onSelect(index)}
-              style={[styles.tabItem, isFocused && styles.tabItemActive]}
+              style={[
+                styles.tabItem,
+                isFocused && {
+                  backgroundColor: isDarkMode
+                    ? "rgba(255, 255, 255, 0.16)"
+                    : "rgba(255, 255, 255, 0.72)",
+                },
+              ]}
             >
               <Image
                 source={tabIcons[routeName]}
                 style={[
                   styles.tabIcon,
                   {
-                    tintColor: isFocused ? "#111827" : "#475569",
+                    tintColor: isFocused ? colors.text : colors.secondaryText,
                   },
                 ]}
               />
@@ -70,7 +92,7 @@ const MainTabBar = ({ activeIndex, onSelect, blurTarget }: MainTabBarProps) => {
                 style={[
                   styles.tabLabel,
                   {
-                    color: isFocused ? "#111827" : "#475569",
+                    color: isFocused ? colors.text : colors.secondaryText,
                   },
                 ]}
               >
@@ -85,6 +107,7 @@ const MainTabBar = ({ activeIndex, onSelect, blurTarget }: MainTabBarProps) => {
 };
 
 const MainAppBottomTabs = () => {
+  const { colors } = useTheme();
   const pagerRef = React.useRef<PagerView>(null);
   const blurTargetRef = React.useRef<View | null>(null);
   const [activeIndex, setActiveIndex] = React.useState(0);
@@ -107,7 +130,7 @@ const MainAppBottomTabs = () => {
 
   return (
     <MainTabNavigationContext.Provider value={{ navigateToTab }}>
-      <View style={styles.container}>
+      <View style={[styles.container, { backgroundColor: colors.background }]}>
         <BlurTargetView ref={blurTargetRef} style={styles.pagerTarget}>
           <PagerView
             ref={pagerRef}

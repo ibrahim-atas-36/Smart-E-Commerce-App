@@ -8,6 +8,7 @@ import {
 import React from "react";
 import { vs, s } from "react-native-size-matters";
 import { AppColors } from "../../styles/color";
+import { useTheme } from "../../store/ThemeContext";
 
 interface AppTextInputProps extends TextInputProps {
   value: string;
@@ -27,15 +28,27 @@ const AppTextInput: React.FC<AppTextInputProps> = ({
   style,
   ...rest
 }) => {
+  const { colors } = useTheme();
+
   return (
     <TextInput
       {...rest}
       value={value}
       onChangeText={onChangeText}
       placeholder={placeholder}
+      placeholderTextColor={colors.secondaryText}
       secureTextEntry={secureTextEntry}
       keyboardType={keyboardType}
-      style={[styles.input, style]}
+      selectionColor={colors.accent}
+      style={[
+        styles.input,
+        {
+          backgroundColor: colors.elevatedSurface,
+          borderColor: colors.borderColor,
+          color: colors.text,
+        },
+        style,
+      ]}
     />
   );
 };

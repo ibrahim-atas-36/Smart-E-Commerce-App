@@ -10,6 +10,7 @@ import React from "react";
 import { AppColors } from "../../styles/color";
 import { vs, s } from "react-native-size-matters";
 import AppText from "../texts/AppText";
+import { useTheme } from "../../store/ThemeContext";
 
 interface AppButtonProps extends TouchableOpacityProps {
   title: string;
@@ -22,13 +23,15 @@ interface AppButtonProps extends TouchableOpacityProps {
 const AppButton: React.FC<AppButtonProps> = ({
   onPress,
   title,
-  backgroundColor = AppColors.primary,
-  textColor = AppColors.white,
+  backgroundColor,
+  textColor,
   style,
   styleTitle,
   disabled = false,
   ...rest
 }) => {
+  const { colors } = useTheme();
+
   return (
     <TouchableOpacity
       {...rest}
@@ -36,14 +39,22 @@ const AppButton: React.FC<AppButtonProps> = ({
       activeOpacity={0.7}
       style={[
         styles.button,
-        { backgroundColor: disabled ? AppColors.blueGray : backgroundColor },
+        {
+          backgroundColor: disabled
+            ? colors.disabledGray
+            : (backgroundColor ?? colors.primary),
+        },
         style,
       ]}
       disabled={disabled}
     >
       <AppText
         variant="bold"
-        style={[styles.textTitle, { color: textColor }, styleTitle]}
+        style={[
+          styles.textTitle,
+          { color: textColor ?? colors.onPrimary },
+          styleTitle,
+        ]}
       >
         {title}
       </AppText>

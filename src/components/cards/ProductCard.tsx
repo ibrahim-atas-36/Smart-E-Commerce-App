@@ -5,6 +5,8 @@ import { AppColors } from "../../styles/color";
 import AppText from "../texts/AppText";
 import { useCart } from "../../store/CartContext";
 import type { Product } from "../../types/product";
+import { useTheme } from "../../store/ThemeContext";
+import { useLanguage } from "../../store/LanguageContext";
 
 export type { Product } from "../../types/product";
 
@@ -15,6 +17,8 @@ interface ProductCardProps {
 
 const ProductCard: React.FC<ProductCardProps> = ({ product, onPress }) => {
   const { cart, addToCart, toggleFavorite, isFavorite } = useCart();
+  const { colors } = useTheme();
+  const { t } = useLanguage();
   const addedToCart = cart.some((item) => item.id === product.id);
   const markedFavorite = isFavorite(product.id);
 
@@ -22,9 +26,18 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onPress }) => {
     <Pressable
       accessibilityRole="button"
       onPress={() => onPress?.(product)}
-      style={({ pressed }) => [styles.container, pressed && styles.pressed]}
+      style={({ pressed }) => [
+        styles.container,
+        { backgroundColor: colors.surface, borderColor: colors.border },
+        pressed && styles.pressed,
+      ]}
     >
-      <View style={styles.imageContainer}>
+      <View
+        style={[
+          styles.imageContainer,
+          { backgroundColor: colors.elevatedSurface },
+        ]}
+      >
         <Image
           source={{ uri: product.imageURL }}
           style={styles.image}
@@ -35,12 +48,12 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onPress }) => {
             markedFavorite ? "Remove from favorites" : "Add to favorites"
           }
           onPress={() => toggleFavorite(product)}
-          style={styles.favoriteButton}
+          style={[styles.favoriteButton, { backgroundColor: colors.surface }]}
         >
           <AppText
             style={[
               styles.favoriteIcon,
-              markedFavorite && styles.favoriteActive,
+              { color: markedFavorite ? colors.accent : colors.medGray },
             ]}
           >
             {markedFavorite ? "♥" : "♡"}
@@ -48,10 +61,16 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onPress }) => {
         </Pressable>
       </View>
       <View style={styles.details}>
-        <AppText numberOfLines={1} style={styles.title}>
+        <AppText
+          numberOfLines={1}
+          style={[styles.title, { color: colors.text }]}
+        >
           {product.title}
         </AppText>
-        <AppText variant="bold" style={styles.price}>
+        <AppText
+          variant="bold"
+          style={[styles.price, { color: colors.primary }]}
+        >
           ${product.price.toLocaleString()}
         </AppText>
         <Pressable
@@ -60,22 +79,29 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onPress }) => {
           }
           disabled={addedToCart}
           onPress={() => addToCart(product)}
-          style={[styles.cartButton, addedToCart && styles.cartButtonAdded]}
+          style={[
+            styles.cartButton,
+            { backgroundColor: colors.primary },
+            addedToCart && {
+              backgroundColor: colors.surface,
+              borderColor: colors.border,
+            },
+          ]}
         >
           <Image
             source={require("../../assets/images/cart-tab-icon.png")}
             style={[
               styles.cartButtonIcon,
-              { tintColor: addedToCart ? AppColors.black : AppColors.white },
+              { tintColor: addedToCart ? colors.black : colors.onPrimary },
             ]}
           />
           <AppText
             style={[
               styles.cartButtonText,
-              addedToCart && styles.cartButtonTextAdded,
+              { color: addedToCart ? colors.text : colors.onPrimary },
             ]}
           >
-            {addedToCart ? "Sepete eklendi" : "Add to cart"}
+            {addedToCart ? t("addedToCart") : t("addToCart")}
           </AppText>
         </Pressable>
       </View>

@@ -10,6 +10,9 @@ import { AppColors } from "../../styles/color";
 import { useNavigation } from "@react-navigation/native";
 import type { StackNavigationProp } from "@react-navigation/stack";
 import type { AuthStackParamList } from "../../navigation/AuthStack";
+import { useTheme } from "../../store/ThemeContext";
+import AuthScreenActions from "../../components/headers/AuthScreenActions";
+import { useLanguage } from "../../store/LanguageContext";
 
 type SignInNavigationProp = StackNavigationProp<
   AuthStackParamList,
@@ -21,16 +24,24 @@ const SignInScreen = () => {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
+  const { colors, isDarkMode } = useTheme();
+  const { t } = useLanguage();
   // This hook gives the screen access to the typed auth navigator.
   const navigation = useNavigation<SignInNavigationProp>();
 
   return (
-    <AppSafeView style={styles.container}>
+    <AppSafeView
+      style={[styles.container, { backgroundColor: colors.background }]}
+    >
+      <AuthScreenActions />
       <View style={styles.form}>
-        <Image source={IMAGES.appLogo} style={styles.logo} />
+        <Image
+          source={IMAGES.appLogo}
+          style={[styles.logo, isDarkMode && { tintColor: colors.text }]}
+        />
 
         <AppTextInput
-          placeholder="Email"
+          placeholder={t("email")}
           onChangeText={setEmail}
           value={email}
           keyboardType="email-address"
@@ -39,7 +50,7 @@ const SignInScreen = () => {
 
         <View style={styles.passwordWrapper}>
           <AppTextInput
-            placeholder="Password"
+            placeholder={t("password")}
             onChangeText={setPassword}
             value={password}
             secureTextEntry={!showPassword}
@@ -51,13 +62,16 @@ const SignInScreen = () => {
             onPress={() => setShowPassword((prev) => !prev)}
             style={styles.eyeButton}
           >
-            <AppText style={styles.eyeText}>
+            <AppText style={[styles.eyeText, { color: colors.secondaryText }]}>
               {showPassword ? "Hide" : "Show"}
             </AppText>
           </Pressable>
         </View>
 
-        <AppText variant="bold" style={styles.appName}>
+        <AppText
+          variant="bold"
+          style={[styles.appName, { color: colors.text }]}
+        >
           Smart E Commerce
         </AppText>
 
@@ -67,40 +81,79 @@ const SignInScreen = () => {
             style={styles.rememberRow}
           >
             <View
-              style={[styles.checkbox, rememberMe && styles.checkboxChecked]}
+              style={[
+                styles.checkbox,
+                {
+                  backgroundColor: colors.surface,
+                  borderColor: colors.borderColor,
+                },
+                rememberMe && {
+                  backgroundColor: colors.primary,
+                  borderColor: colors.primary,
+                },
+              ]}
             >
               {rememberMe ? (
-                <AppText style={styles.checkMark}>✓</AppText>
+                <AppText
+                  style={[styles.checkMark, { color: colors.background }]}
+                >
+                  ✓
+                </AppText>
               ) : null}
             </View>
-            <AppText style={styles.rememberText}>Remember me</AppText>
+            <AppText
+              style={[styles.rememberText, { color: colors.secondaryText }]}
+            >
+              {t("rememberMe")}
+            </AppText>
           </Pressable>
-          <AppText style={styles.forgotPassword}>Forgot Password?</AppText>
+          <AppText
+            style={[styles.forgotPassword, { color: colors.secondaryText }]}
+          >
+            {t("forgotPassword")}
+          </AppText>
         </View>
 
         <AppButton
-          title="Login"
+          title={t("login")}
           style={styles.loginButton}
           // Continue to the main tab layout after the login action.
           onPress={() => navigation.navigate("MainApp")}
         />
         <AppButton
-          title="Sign Up"
+          title={t("signUp")}
           style={styles.registerButton}
-          backgroundColor={AppColors.lightGray}
-          textColor={AppColors.black}
+          backgroundColor={colors.elevatedSurface}
+          textColor={colors.text}
           // Open the registration screen when the secondary button is pressed.
           onPress={() => navigation.navigate("SignUpScreen")}
         />
 
         <View style={styles.dividerRow}>
           <View style={styles.dividerLine} />
-          <AppText style={styles.dividerText}>or continue with</AppText>
+          <AppText
+            style={[styles.dividerText, { color: colors.secondaryText }]}
+          >
+            {t("continueWith")}
+          </AppText>
           <View style={styles.dividerLine} />
         </View>
 
-        <Pressable style={styles.googleButton}>
-          <View style={styles.googleIconWrapper}>
+        <Pressable
+          style={[
+            styles.googleButton,
+            {
+              backgroundColor: colors.surface,
+              borderColor: colors.borderColor,
+            },
+          ]}
+        >
+          <View
+            style={[
+              styles.googleIconWrapper,
+              { backgroundColor: colors.surface },
+            ]}
+          >
             <View style={styles.googleLogo}>
               <View style={[styles.googleArc, styles.googleBlue]} />
               <View style={[styles.googleArc, styles.googleRed]} />
@@ -109,26 +162,39 @@ const SignInScreen = () => {
               <View style={styles.googleCenter} />
             </View>
           </View>
-          <AppText style={styles.googleButtonText}>
-            Continue with Google
+          <AppText style={[styles.googleButtonText, { color: colors.text }]}>
+            {t("continueGoogle")}
           </AppText>
         </Pressable>
 
         {Platform.OS === "ios" ? (
-          <Pressable style={styles.appleButton}>
+          <Pressable
+            style={[
+              styles.appleButton,
+              { backgroundColor: colors.primary, borderColor: colors.primary },
+            ]}
+          >
             <View style={styles.appleIconWrapper}>
-              <AppText style={styles.appleIcon}></AppText>
+              <AppText style={[styles.appleIcon, { color: colors.background }]}>
+                
+              </AppText>
             </View>
-            <AppText style={styles.appleButtonText}>
-              Continue with Apple
+            <AppText
+              style={[styles.appleButtonText, { color: colors.background }]}
+            >
+              {t("continueApple")}
             </AppText>
           </Pressable>
         ) : null}
 
         <View style={styles.signUpRow}>
-          <AppText style={styles.signUpText}>Don’t have an account?</AppText>
+          <AppText style={[styles.signUpText, { color: colors.text }]}>
+            {t("noAccount")}
+          </AppText>
           <Pressable onPress={() => navigation.navigate("SignUpScreen")}>
-            <AppText style={styles.signUpLink}>Sign Up</AppText>
+            <AppText style={[styles.signUpLink, { color: colors.text }]}>
+              {t("signUp")}
+            </AppText>
           </Pressable>
         </View>
       </View>

@@ -7,6 +7,7 @@ import {
 } from "react-native";
 import { s } from "react-native-size-matters";
 import { AppColors } from "../../styles/color";
+import { useTheme } from "../../store/ThemeContext";
 
 interface AppTextProps extends TextProps {
   children: React.ReactNode;
@@ -20,8 +21,10 @@ const AppText: React.FC<AppTextProps> = ({
   variant = "medium",
   ...rest
 }) => {
+  const { colors } = useTheme();
+
   return (
-    <Text {...rest} style={[styles[variant], style]}>
+    <Text {...rest} style={[styles[variant], { color: colors.text }, style]}>
       {children}
     </Text>
   );
