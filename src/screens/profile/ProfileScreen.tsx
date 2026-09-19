@@ -198,6 +198,47 @@ const ProfileScreen = () => {
           </Pressable>
         </View>
 
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel="View order history"
+          onPress={() => navigation.navigate("OrderHistory")}
+          style={[
+            styles.historyButton,
+            { backgroundColor: colors.surface, borderColor: colors.border },
+          ]}
+        >
+          <View
+            style={[styles.settingIcon, { backgroundColor: colors.elevated }]}
+          >
+            <MaterialIcons
+              name="receipt-long"
+              size={s(20)}
+              color={colors.text}
+            />
+          </View>
+          <View style={styles.settingCopy}>
+            <AppText
+              variant="bold"
+              style={[styles.settingTitle, { color: colors.text }]}
+            >
+              Sipariş geçmişim
+            </AppText>
+            <AppText
+              style={[
+                styles.settingDescription,
+                { color: colors.secondaryText },
+              ]}
+            >
+              Siparişlerini ve durumlarını görüntüle
+            </AppText>
+          </View>
+          <MaterialIcons
+            name="chevron-right"
+            size={s(23)}
+            color={colors.secondaryText}
+          />
+        </Pressable>
+
         <AppText style={[styles.sectionLabel, { color: colors.secondaryText }]}>
           {t("support")}
         </AppText>
@@ -454,6 +495,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: s(16),
     borderRadius: s(20),
     borderWidth: 1,
+  },
+  historyButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    borderRadius: s(20),
+    borderWidth: 1,
+    padding: s(14),
+    marginTop: vs(12),
   },
   modalBackdrop: {
     flex: 1,

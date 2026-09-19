@@ -13,6 +13,7 @@ import type { AuthStackParamList } from "../../navigation/AuthStack";
 import { useTheme } from "../../store/ThemeContext";
 import AuthScreenActions from "../../components/headers/AuthScreenActions";
 import { useLanguage } from "../../store/LanguageContext";
+import { useAuthSession } from "../../store/AuthSessionContext";
 
 type SignUpNavigationProp = StackNavigationProp<
   AuthStackParamList,
@@ -29,6 +30,7 @@ const SignUpScreen = () => {
   const { t } = useLanguage();
   // This hook lets the sign-up screen return to the sign-in screen.
   const navigation = useNavigation<SignUpNavigationProp>();
+  const { signIn } = useAuthSession();
 
   return (
     <AppSafeView
@@ -100,7 +102,10 @@ const SignUpScreen = () => {
           title={t("createAccount")}
           style={styles.loginButton}
           // Continue to the main tab layout after account creation.
-          onPress={() => navigation.navigate("MainApp")}
+          onPress={async () => {
+            await signIn(email, true);
+            navigation.navigate("MainApp");
+          }}
         />
         <AppButton
           title={t("login")}

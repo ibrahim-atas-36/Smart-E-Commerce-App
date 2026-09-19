@@ -1,5 +1,13 @@
-import { Image, Pressable, StyleSheet, View } from "react-native";
+import {
+  Animated,
+  Easing,
+  Image,
+  Pressable,
+  StyleSheet,
+  View,
+} from "react-native";
 import React from "react";
+import { showMessage } from "react-native-flash-message";
 import { s, vs } from "react-native-size-matters";
 import { AppColors } from "../../styles/color";
 import AppText from "../texts/AppText";
@@ -7,6 +15,7 @@ import { useCart } from "../../store/CartContext";
 import type { Product } from "../../types/product";
 import { useTheme } from "../../store/ThemeContext";
 import { useLanguage } from "../../store/LanguageContext";
+import { Image as ExpoImage } from "expo-image";
 
 export type { Product } from "../../types/product";
 
@@ -21,6 +30,38 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onPress }) => {
   const { t } = useLanguage();
   const addedToCart = cart.some((item) => item.id === product.id);
   const markedFavorite = isFavorite(product.id);
+  const favoriteScale = React.useRef(new Animated.Value(1)).current;
+
+  const animateFavorite = () => {
+    Animated.sequence([
+      Animated.timing(favoriteScale, {
+        toValue: 1.28,
+        duration: 110,
+        easing: Easing.out(Easing.quad),
+        useNativeDriver: true,
+      }),
+      Animated.spring(favoriteScale, {
+        toValue: 1,
+        friction: 4,
+        useNativeDriver: true,
+      }),
+    ]).start();
+    toggleFavorite(product);
+    showMessage({
+      message: markedFavorite ? "Favorilerden çıkarıldı" : "Favorilere eklendi",
+      type: "success",
+      duration: 1800,
+    });
+  };
+
+  const addProductToCart = () => {
+    addToCart(product);
+    showMessage({
+      message: "Ürün sepete eklendi",
+      type: "success",
+      duration: 1800,
+    });
+  };
 
   return (
     <Pressable
@@ -38,26 +79,29 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onPress }) => {
           { backgroundColor: colors.elevatedSurface },
         ]}
       >
-        <Image
+        <ExpoImage
           source={{ uri: product.imageURL }}
           style={styles.image}
+          cachePolicy="memory-disk"
           resizeMode="contain"
         />
         <Pressable
           accessibilityLabel={
             markedFavorite ? "Remove from favorites" : "Add to favorites"
           }
-          onPress={() => toggleFavorite(product)}
+          onPress={animateFavorite}
           style={[styles.favoriteButton, { backgroundColor: colors.surface }]}
         >
-          <AppText
-            style={[
-              styles.favoriteIcon,
-              { color: markedFavorite ? colors.accent : colors.medGray },
-            ]}
-          >
-            {markedFavorite ? "♥" : "♡"}
-          </AppText>
+          <Animated.View style={{ transform: [{ scale: favoriteScale }] }}>
+            <AppText
+              style={[
+                styles.favoriteIcon,
+                { color: markedFavorite ? colors.accent : colors.medGray },
+              ]}
+            >
+              {markedFavorite ? "♥" : "♡"}
+            </AppText>
+          </Animated.View>
         </Pressable>
       </View>
       <View style={styles.details}>
@@ -78,7 +122,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onPress }) => {
             addedToCart ? "Product already in cart" : "Add product to cart"
           }
           disabled={addedToCart}
-          onPress={() => addToCart(product)}
+          onPress={addProductToCart}
           style={[
             styles.cartButton,
             { backgroundColor: colors.primary },

@@ -1,7 +1,8 @@
-import { FlatList, Image, Pressable, StyleSheet, View } from "react-native";
+import { FlatList, Pressable, StyleSheet, View } from "react-native";
 import React from "react";
 import AppSafeView from "../../components/views/AppSafeView";
 import AppText from "../../components/texts/AppText";
+import AppTextInput from "../../components/inputs/AppTextInput";
 import { useCart } from "../../store/CartContext";
 import { AppColors } from "../../styles/color";
 import { s, vs } from "react-native-size-matters";
@@ -9,6 +10,13 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { useMainTabNavigation } from "../../navigation/MainTabNavigationContext";
 import { useTheme } from "../../store/ThemeContext";
 import { useLanguage } from "../../store/LanguageContext";
+import LottieView from "lottie-react-native";
+import { useNavigation } from "@react-navigation/native";
+import type { StackNavigationProp } from "@react-navigation/stack";
+import type { AuthStackParamList } from "../../navigation/AuthStack";
+import { Image as ExpoImage } from "expo-image";
+
+type CartNavigation = StackNavigationProp<AuthStackParamList, "MainApp">;
 
 const CartScreen = () => {
   const {
@@ -22,7 +30,12 @@ const CartScreen = () => {
   const { navigateToTab } = useMainTabNavigation();
   const { colors } = useTheme();
   const { t } = useLanguage();
+  const navigation = useNavigation<CartNavigation>();
+  const [coupon, setCoupon] = React.useState("");
+  const [couponApplied, setCouponApplied] = React.useState(false);
   const cartTotal = cart.reduce((total, product) => total + product.price, 0);
+  const discount = couponApplied ? cartTotal * 0.1 : 0;
+  const total = cartTotal - discount;
 
   return (
     <AppSafeView
@@ -55,10 +68,11 @@ const CartScreen = () => {
                 { backgroundColor: colors.elevatedSurface },
               ]}
             >
-              <MaterialIcons
-                name="shopping-bag"
-                size={s(34)}
-                color={colors.primary}
+              <LottieView
+                source={require("../../assets/animations/empty-state.json")}
+                autoPlay
+                loop
+                style={styles.emptyAnimation}
               />
             </View>
             <AppText
@@ -101,12 +115,13 @@ const CartScreen = () => {
               { backgroundColor: colors.surface, borderColor: colors.border },
             ]}
           >
-            <Image
+            <ExpoImage
               source={{ uri: item.imageURL }}
               style={[
                 styles.itemImage,
                 { backgroundColor: colors.elevatedSurface },
               ]}
+              cachePolicy="memory-disk"
             />
             <View style={styles.itemDetails}>
               <AppText numberOfLines={1} style={styles.itemTitle}>
@@ -142,12 +157,13 @@ const CartScreen = () => {
                       { backgroundColor: colors.surface },
                     ]}
                   >
-                    <Image
+                    <ExpoImage
                       source={{ uri: product.imageURL }}
                       style={[
                         styles.favoriteImage,
                         { backgroundColor: colors.elevatedSurface },
                       ]}
+                      cachePolicy="memory-disk"
                     />
                     <AppText numberOfLines={1} style={styles.favoriteText}>
                       {product.title}
@@ -207,6 +223,16 @@ const CartScreen = () => {
                     ${cartTotal.toLocaleString()}
                   </AppText>
                 </View>
+                {couponApplied ? (
+                  <View style={styles.summaryRow}>
+                    <AppText style={{ color: colors.accent }}>
+                      SMART10 indirimi
+                    </AppText>
+                    <AppText style={{ color: colors.accent }}>
+                      -${discount.toFixed(0)}
+                    </AppText>
+                  </View>
+                ) : null}
                 <View
                   style={[
                     styles.summaryDivider,
@@ -221,10 +247,51 @@ const CartScreen = () => {
                     variant="bold"
                     style={[styles.summaryTotal, { color: colors.primary }]}
                   >
-                    ${cartTotal.toLocaleString()}
+                    ${total.toFixed(0)}
                   </AppText>
                 </View>
               </View>
+            ) : null}
+            {cart.length > 0 ? (
+              <View style={styles.couponRow}>
+                <AppTextInput
+                  value={coupon}
+                  onChangeText={setCoupon}
+                  placeholder="İndirim kodu gir"
+                  autoCapitalize="characters"
+                  style={styles.couponInput}
+                />
+                <Pressable
+                  onPress={() =>
+                    setCouponApplied(coupon.trim().toUpperCase() === "SMART10")
+                  }
+                  style={[styles.applyButton, { borderColor: colors.primary }]}
+                >
+                  <AppText variant="bold" style={{ color: colors.primary }}>
+                    Uygula
+                  </AppText>
+                </Pressable>
+              </View>
+            ) : null}
+            {cart.length > 0 ? (
+              <Pressable
+                accessibilityRole="button"
+                accessibilityLabel="Proceed to checkout"
+                onPress={() => navigation.navigate("Checkout")}
+                style={[
+                  styles.checkoutButton,
+                  { backgroundColor: colors.primary },
+                ]}
+              >
+                <AppText variant="bold" style={{ color: colors.onPrimary }}>
+                  Ödemeye geç
+                </AppText>
+                <MaterialIcons
+                  name="arrow-forward"
+                  size={s(20)}
+                  color={colors.onPrimary}
+                />
+              </Pressable>
             ) : null}
           </>
         }
@@ -318,6 +385,10 @@ const styles = StyleSheet.create({
     backgroundColor: AppColors.lightGray,
     marginBottom: vs(16),
   },
+  emptyAnimation: {
+    width: s(70),
+    height: s(70),
+  },
   emptyEyebrow: {
     color: AppColors.medGray,
     fontSize: s(10),
@@ -403,6 +474,32 @@ const styles = StyleSheet.create({
   favoriteActionButton: {
     width: s(30),
     height: s(34),
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  checkoutButton: {
+    minHeight: vs(48),
+    marginTop: vs(12),
+    borderRadius: s(14),
+    paddingHorizontal: s(18),
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  couponRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: s(8),
+    marginTop: vs(12),
+  },
+  couponInput: {
+    flex: 1,
+  },
+  applyButton: {
+    height: vs(42),
+    borderWidth: 1,
+    borderRadius: s(14),
+    paddingHorizontal: s(14),
     alignItems: "center",
     justifyContent: "center",
   },

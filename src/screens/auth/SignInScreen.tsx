@@ -13,6 +13,7 @@ import type { AuthStackParamList } from "../../navigation/AuthStack";
 import { useTheme } from "../../store/ThemeContext";
 import AuthScreenActions from "../../components/headers/AuthScreenActions";
 import { useLanguage } from "../../store/LanguageContext";
+import { useAuthSession } from "../../store/AuthSessionContext";
 
 type SignInNavigationProp = StackNavigationProp<
   AuthStackParamList,
@@ -28,6 +29,12 @@ const SignInScreen = () => {
   const { t } = useLanguage();
   // This hook gives the screen access to the typed auth navigator.
   const navigation = useNavigation<SignInNavigationProp>();
+  const { signIn } = useAuthSession();
+
+  const handleLogin = async () => {
+    await signIn(email, rememberMe);
+    navigation.navigate("MainApp");
+  };
 
   return (
     <AppSafeView
@@ -118,7 +125,7 @@ const SignInScreen = () => {
           title={t("login")}
           style={styles.loginButton}
           // Continue to the main tab layout after the login action.
-          onPress={() => navigation.navigate("MainApp")}
+          onPress={handleLogin}
         />
         <AppButton
           title={t("signUp")}

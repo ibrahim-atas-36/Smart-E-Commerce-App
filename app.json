@@ -20,6 +20,21 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "plugins": [
+      "expo-image",
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Ürün barkodu ve QR kodu taramak için kameraya erişim gerekir."
+        }
+      ],
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "Teslimat adresini haritada seçebilmek için konum erişimi gerekir."
+        }
+      ]
+    ]
   }
 }
