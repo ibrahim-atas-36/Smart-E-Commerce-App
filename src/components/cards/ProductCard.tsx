@@ -84,7 +84,8 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onPress }) => {
             { backgroundColor: colors.primary },
             addedToCart && {
               backgroundColor: colors.surface,
-              borderColor: colors.border,
+              borderWidth: 1,
+              borderColor: colors.accent,
             },
           ]}
         >
@@ -92,13 +93,13 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onPress }) => {
             source={require("../../assets/images/cart-tab-icon.png")}
             style={[
               styles.cartButtonIcon,
-              { tintColor: addedToCart ? colors.black : colors.onPrimary },
+              { tintColor: addedToCart ? colors.accent : colors.onPrimary },
             ]}
           />
           <AppText
             style={[
               styles.cartButtonText,
-              { color: addedToCart ? colors.text : colors.onPrimary },
+              { color: addedToCart ? colors.accent : colors.onPrimary },
             ]}
           >
             {addedToCart ? t("addedToCart") : t("addToCart")}
